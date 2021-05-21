@@ -1,0 +1,10 @@
+{
+    "/api": {
+      "target": "https://fifthst.top",
+      "secure": true,
+      "changeOrigin": true,
+      "pathRewrite": {
+        "^/api": ""
+      }
+    }
+  }

@@ -64,20 +64,20 @@ export class Ng2SmartTableComponent implements OnChanges, OnDestroy {
     },
     edit: {
       inputClass: '',
-      editButtonContent: 'Edit',
-      saveButtonContent: 'Update',
-      cancelButtonContent: 'Cancel',
+      editButtonContent: '编辑',
+      saveButtonContent: '更新',
+      cancelButtonContent: '取消',
       confirmSave: false,
     },
     add: {
       inputClass: '',
-      addButtonContent: 'Add New',
-      createButtonContent: 'Create',
-      cancelButtonContent: 'Cancel',
+      addButtonContent: '新增',
+      createButtonContent: '添加',
+      cancelButtonContent: '取消',
       confirmCreate: false,
     },
     delete: {
-      deleteButtonContent: 'Delete',
+      deleteButtonContent: '删除',
       confirmDelete: false,
     },
     attr: {

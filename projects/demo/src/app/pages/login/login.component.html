@@ -1,0 +1,48 @@
+<div class="login_container">
+  <h1 id="title" class="title">Login</h1>
+<p class="sub-title">Hello Master! Log in with your account.</p>
+<nb-alert *ngIf="showMessages.success && messages?.length && !submitted" outline="success" role="alert">
+  <p class="alert-title"><b>Hooray!</b></p>
+  <ul class="alert-message-list">
+    <li *ngFor="let message of messages" class="alert-message">{{ message }}</li>
+  </ul>
+</nb-alert>
+
+<form>
+
+  <div class="form-control-group">
+    <label class="label" for="input-email">Phone ID:</label>
+           <input nbInput
+           [(ngModel)]="user.name"
+           [ngModelOptions]="{standalone: true}"
+           fullWidth>
+  </div>
+
+  <div class="form-control-group">
+    <span class="label-with-link">
+      <label class="label" for="input-password">Password:</label>
+      <!-- <a class="forgot-password caption-2" routerLink="../request-password">Forgot Password?</a> -->
+    </span>
+           <input nbInput
+           type="password"
+           [(ngModel)]="user.password"
+           [ngModelOptions]="{standalone: true}"
+           fullWidth>
+  </div>
+
+  <div class="form-control-group accept-group">
+  </div>
+  <button nbButton
+          fullWidth
+          status="primary"
+          size="large"
+          (click)="login()"
+          >
+    Log In
+  </button>
+</form>
+
+<section class="another-action" aria-label="Register">
+  If not used, keep exiting
+</section>
+</div>

@@ -41,6 +41,12 @@
           margin: 0;
           padding: 0.5em 1em;
         }
+        td div{
+          overflow: hidden;
+          text-overflow:ellipsis;
+          white-space: nowrap;
+          // width: 100px;
+        }
       }
     }
 

@@ -1,9 +1,16 @@
 import { Routes } from '@angular/router';
 
+import { LoginGuard  } from './../shared/author/focusGuard';
+
 export const routes: Routes = [
   {
     path: '',
+    loadChildren: () => import('./login/login.module').then(m => m.LoginModule),
+  },
+  {
+    path: 'home',
     loadChildren: () => import('./home/home.module').then(m => m.HomeModule),
+    canActivate: [LoginGuard]
   },
   {
     path: 'demo',

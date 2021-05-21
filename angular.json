@@ -40,7 +40,19 @@
               "**/node_modules/**"
             ]
           }
+        },
+        "serve": {
+          "builder": "@angular-devkit/build-angular:dev-server",
+          "options": {
+            "browserTarget": "demo:build"
+          },
+          "configurations": {
+            "production": {
+              "browserTarget": "demo:build:production"
+            }
+          }
         }
+
       }
     },
     "demo": {
@@ -60,8 +72,6 @@
             "tsConfig": "projects/demo/tsconfig.app.json",
             "aot": true,
             "assets": [
-              "projects/demo/src/favicon.ico",
-              "projects/demo/src/assets"
             ],
             "styles": [
               "node_modules/highlight.js/styles/dracula.css",
@@ -102,7 +112,8 @@
         "serve": {
           "builder": "@angular-devkit/build-angular:dev-server",
           "options": {
-            "browserTarget": "demo:build"
+            "browserTarget": "demo:build",
+            "proxyConfig": "src/proxy.conf.json"
           },
           "configurations": {
             "production": {

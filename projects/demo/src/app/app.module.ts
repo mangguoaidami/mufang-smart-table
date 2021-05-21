@@ -9,6 +9,7 @@ import { PagesModule } from './pages/pages.module';
 import { AppComponent } from './app.component';
 import { routes } from './app.routes';
 import { ScrollPositionDirective } from './theme/directives/scrollPosition.directive';
+import { ExcelService } from './services/sharedServices';
 @NgModule({
   declarations: [
     AppComponent,
@@ -22,7 +23,7 @@ import { ScrollPositionDirective } from './theme/directives/scrollPosition.direc
     Ng2SmartTableModule,
     PagesModule,
   ],
-  providers: [],
+  providers: [ ExcelService ],
   bootstrap: [AppComponent],
 })
 export class AppModule { }
