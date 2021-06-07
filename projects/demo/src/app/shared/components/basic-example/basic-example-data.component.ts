@@ -5,17 +5,7 @@ import { CustomRenderComponent } from './../../../pages/examples/custom-edit-vie
 
 @Component({
   selector: 'basic-example-data',
-  template: `
-    <div class="container">
-    <p>姓名：{{showUserDetail.name}}</p>
-    <p>微信：{{showUserDetail.wechat}}</p>
-    <p>课程名称：{{showUserDetail.courceName}}</p>
-    <p>使用次数：{{showUserDetail.doneTime}}/{{showUserDetail.buyClassTime}}</p>
-    <p>使用时间：{{showUserDetail.purchaseTime}}</p>
-    <p class="hasTheDate">签到记录：{{showUserDetail.hasTheDate}}</p>
-    <ng2-smart-table [settings]="settings" (createConfirm)="addRow($event)" (editConfirm)="editeRow($event)" (deleteConfirm)="deleteFn($event)" (rowSelect)="rowSelectFn($event)" [source]="data"></ng2-smart-table>
-    </div>
-  `,
+  templateUrl: './basic-example-data.component.html',
   styleUrls: ['./basic-example-data.component.scss'],
 })
 export class BasicExampleDataComponent implements OnInit {
@@ -74,7 +64,7 @@ export class BasicExampleDataComponent implements OnInit {
         title: '已用课次',
       },
       buyClassTime: {
-        title: '购买课次',
+        title: '总共课次',
       },
       purchaseTime: {
         title: '课程使用时间',
@@ -85,6 +75,52 @@ export class BasicExampleDataComponent implements OnInit {
       },
       hasTheDate: {
         title: '签到日期',
+        // width: '500px',
+        type: 'custom',
+        class: 'custom',
+        renderComponent: CustomRenderComponent
+        // hide: true
+        // valuePrepareFunction: (cell, row) => row.hasTheDate
+      }
+    },
+  };
+
+  settingsFree = {
+    add: {
+      confirmCreate: true,
+      inputClass: 'add_input',
+      // addButtonContent: '保存',
+      createButtonContent: '保存',
+      cancelButtonContent: '取消'
+    },
+    edit: {
+      confirmSave: true,
+      saveButtonContent: '保存',
+      cancelButtonContent: '取消',
+    },
+    delete: {
+      confirmDelete: true,
+      // deleteButtonContent: 'Delete data',
+      // saveButtonContent: 'save',
+      // cancelButtonContent: 'cancel'
+    },
+    columns: {
+      id: {
+        title: 'ID',
+        editable: false,
+        // hide: true
+      },
+      name: {
+        title: '姓名',
+      },
+      wechat: {
+        title: '微信号',
+      },
+      phone: {
+        title: '联系电话',
+      },
+      hasTheDate: {
+        title: '缴费记录',
         // width: '500px',
         type: 'custom',
         class: 'custom',

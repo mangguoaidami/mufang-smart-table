@@ -22,9 +22,13 @@
     margin: 0 10px;
   }
 
-  .page-link-next, .page-link-prev {
-    font-size: 10px;
-  }
+  // .page-link-next, .page-link-prev {
+  //   font-size: 10px;
+  // }
+}
+
+.ng2-smart-pagination-nav {
+  margin-top: 20px;
 }
 
 :host {
