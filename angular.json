@@ -71,11 +71,12 @@
             "polyfills": "projects/demo/src/polyfills.ts",
             "tsConfig": "projects/demo/tsconfig.app.json",
             "aot": true,
-            "assets": [
-            ],
+            "assets": [],
             "styles": [
               "node_modules/highlight.js/styles/dracula.css",
-              "projects/demo/src/app/theme/theme.scss"
+              "projects/demo/src/app/theme/theme.scss",
+              "projects/demo/src/assets/css/style.css",
+              "node_modules/@angular/material/prebuilt-themes/purple-green.css"
             ],
             "scripts": []
           },
@@ -117,7 +118,8 @@
           },
           "configurations": {
             "production": {
-              "browserTarget": "demo:build:production"
+              "browserTarget": "demo:build:production",
+              "proxyConfig": "src/proxy-prod.config.json"
             }
           }
         },

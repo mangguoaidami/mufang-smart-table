@@ -46,3 +46,10 @@
   If not used, keep exiting
 </section>
 </div>
+
+<div *ngIf="strMsg!==''" class="loading">
+  <div class="loading-inner">
+    <mat-spinner></mat-spinner>
+    {{strMsg}}
+  </div>
+</div>

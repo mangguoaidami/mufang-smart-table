@@ -2,7 +2,7 @@ import { CanActivate } from '@angular/router';
 export class LoginGuard implements CanActivate {
   canActivate() {
       const userName = localStorage.getItem('user_name');
-      if (userName === 'yangmu'){
+      if (userName){
           return true;
       }else {
         return false;

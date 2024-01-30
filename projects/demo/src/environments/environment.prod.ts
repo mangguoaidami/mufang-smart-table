@@ -1,4 +1,4 @@
 export const environment = {
   production: true,
-  apiUrl: 'https://fifthst.top/'
+  apiUrl: 'http://110.42.200.139:4000/'
 };

@@ -1,27 +1,56 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewEncapsulation, ViewChild } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
+// import { environment } from './../../../../environments/environment';
 import { environment } from './../../../../environments/environment';
 import { CustomRenderComponent } from './../../../pages/examples/custom-edit-view/custom-render.component';
+import {
+  MatDialog,
+  MatDialogRef,
+  MatDialogActions,
+  MatDialogClose,
+  MatDialogTitle,
+  MatDialogContent,
+} from '@angular/material/dialog';
+import { LoadingService } from '../../../services/loading.service';
+import { Observable } from 'rxjs';
+import {MatCalendar, MatCalendarCellClassFunction} from '@angular/material/datepicker';
+import {MatButtonModule} from '@angular/material/button';
+import { DateListComponent } from './../date-list/date-list.component';
+
+
 
 @Component({
   selector: 'basic-example-data',
   templateUrl: './basic-example-data.component.html',
   styleUrls: ['./basic-example-data.component.scss'],
+  encapsulation: ViewEncapsulation.None,
+  // standalone: true,
+  // imports: [MatButtonModule],
 })
 export class BasicExampleDataComponent implements OnInit {
-  baseUrl = environment.apiUrl;
-  constructor(private http: HttpClient) { }
+  // @ViewChild('calendar')
+  // calendar;
+  @ViewChild(MatCalendar) calendar: MatCalendar<Date>;
+  constructor(private http: HttpClient, private loadingService: LoadingService, public dialog: MatDialog) { }
   public data = [];
+  apiUrl = environment.apiUrl;
   public showUserDetail: {
+    ERPID?: string,
     name?: string,
-    wechat?: string,
-    courceName?: string,
-    doneTime?: string,
-    buyClassTime?: string,
-    purchaseTime?: string,
-    hasTheDate?: string
+    hasNum?: number,
+    validity?: string,
+    didNum?: number,
+    joiningYear?: number,
+    coruseTagName?: string,
+    recorderLists?: any[],
+    division?: string,
+    courseTagName?: string,
   } = {};
+  loading$: Observable<string> = this.loadingService.subject.asObservable();
+  daysSelected: any[] = [];
+  event: any;
 
+  // 签到记录
   settings = {
     add: {
       confirmCreate: true,
@@ -42,49 +71,61 @@ export class BasicExampleDataComponent implements OnInit {
       // cancelButtonContent: 'cancel'
     },
     columns: {
-      id: {
-        title: 'ID',
+      ERPID: {
+        title: 'ERPID',
         editable: false,
         // hide: true
       },
       name: {
         title: '姓名',
       },
-      wechat: {
-        title: '微信号',
-      },
-      courceName: {
+      // wechat: {
+      //   title: '微信号',
+      // },
+      // coursesOpted: {
+      //   title: '课程名称',
+      // },
+      // cardPurchaseCategory: {
+      //   title: '购买卡类别',
+      //   editable: false
+      // },
+      courseTagName: {
         title: '课程名称',
       },
-      cardPurchaseCategory: {
-        title: '购买卡类别',
-        editable: false
-      },
-      doneTime: {
-        title: '已用课次',
-      },
-      buyClassTime: {
+      hasNum: {
         title: '总共课次',
       },
-      purchaseTime: {
-        title: '课程使用时间',
+      validity: {
+        title: '有效时段'
+      },
+      didNum: {
+        title: '已用课次',
+      },
+      joiningYear: {
+        title: '加入时间',
         // width: '500px'
       },
-      phone: {
-        title: '联系电话',
-      },
-      hasTheDate: {
-        title: '签到日期',
-        // width: '500px',
+      recorderLists: {
+        title: '签到记录',
+        editable: false,
         type: 'custom',
-        class: 'custom',
-        renderComponent: CustomRenderComponent
-        // hide: true
-        // valuePrepareFunction: (cell, row) => row.hasTheDate
-      }
+        renderComponent: DateListComponent
+      },
+      // phone: {
+      //   title: '联系电话',
+      // },
+      // hasTheDate: {
+      //   title: '签到日期',
+      //   // width: '500px',
+      //   type: 'custom',
+      //   class: 'custom',
+      //   renderComponent: CustomRenderComponent
+      //   // hide: true
+      //   // valuePrepareFunction: (cell, row) => row.hasTheDate
+      // }
     },
   };
-
+// 缴费记录
   settingsFree = {
     add: {
       confirmCreate: true,
@@ -132,78 +173,157 @@ export class BasicExampleDataComponent implements OnInit {
   };
 
   ngOnInit() {
-    this.getConfig();
+    this.getStudentList();
+  }
+
+  hideLoading(): void {
+    this.loadingService.unsetLoading();
+  }
+
+  showLoading(strMessage: string): void {
+    this.loadingService.setLoading(strMessage);
+  }
+
+  dateToString(value): string {
+    const date = new Date(value);
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const day = String(date.getDate()).padStart(2, '0');
+    const yyyymmdd = `${year}-${month}-${day}`;
+    console.log(yyyymmdd);
+    return(yyyymmdd);
+  }
+
+  // 刷新list列表
+  reloadStudentList(): void {
+    this.getStudentList();
   }
 
   // 获取list列表
-  getConfig() {
+  getStudentList() {
+    this.showLoading('学生列表加载中。。。');
     const httpOptions = {
-      headers: new HttpHeaders({ 'Access-Control-Allow-Origin': '*' })
+      // headers: new HttpHeaders({ 'Access-Control-Allow-Origin': '*' })
     };
-    this.http.post(`api/firstApp/studentInfo/list`, {}, httpOptions).subscribe((res: {
-      code: number,
-      data: any
-    }) => {
-      if (res.code === 200) {
-        this.data = res.data;
+    this.http.get(`${this.apiUrl}student/list`, httpOptions).subscribe((res: any) => {
+      // console.log('获取学生列表', res);
+      if (res.res) {
+        this.data = res.res.data;
+        this.hideLoading();
       }
+    }, (error) => {
+      this.hideLoading();
+      console.log('error', error.error.err);
+      alert(`获取学生列表失败！！！${error.error.err}`);
     });
   }
 
   // 新增学生
   addRow(event): void {
-    this.http.post('api/firstApp/studentInfo/add', event.newData).subscribe((res: {
-      code: number,
-      data: any
-    }) => {
-      if (res.code === 200) {
-        this.settings.add.confirmCreate = true;
+    this.showLoading('新增中。。。');
+    this.http.post(`${this.apiUrl}student/create`, event.newData).subscribe((res: any) => {
+      if (res.res) {
+        this.hideLoading();
         alert('添加成功！');
-        this.getConfig();
+        this.getStudentList();
+        // event.confirm.resolve(event.newData);
       }
     }, (error) => {
+      this.hideLoading();
+      event.confirm.reject();
       alert(`添加失败！！！请确认填写数据：${error.error.message}`);
     });
   }
 
   // 删除学生
   deleteFn(event): void {
-    if (confirm('真的要删除吗?')) {
-      this.http.post('api/firstApp/studentInfo/delete', { id: event.data.id }).subscribe((res: {
-        code: number,
-        data: any
-      }) => {
-        if (res.code === 200) {
-          this.getConfig();
-        }
+    this.showLoading('删除中。。。');
+    console.log('event', event);
+
+    if (confirm(`真的要删除${event.data.name}吗?`)) {
+      this.http.delete(`${this.apiUrl}student/delete/${event.data._id}`).subscribe((res: any) => {
+        this.hideLoading();
+        alert('删除成功！');
+        this.getStudentList();
       });
     }
     else {
+      this.hideLoading();
       alert('点击了取消按钮');
     }
   }
 
   // 编辑学生
   editeRow(event): void {
-    delete event.newData.createTime;
-    delete event.newData.updateTime;
-    delete event.newData.createTimeStr;
-    delete event.newData.updateTimeStr;
+    this.showLoading('提交中。。。');
+    // console.log('editeRow', event);
     // createTimeStr updateTimeStr
-    this.http.post('api/firstApp/studentInfo/update', event.newData).subscribe((res: {
-      code: number,
-      data: any
-    }) => {
-      if (res.code === 200) {
+    this.http.post(`${this.apiUrl}student/update/${event.newData._id}`, event.newData).subscribe((res: any) => {
+      if (res.res) {
         alert('编辑成功！');
-        this.getConfig();
+        this.getStudentList();
       }
+      this.hideLoading();
     }, (error) => {
-      alert(`添加失败！！！请确认填写数据：${error.error.message}`);
+      this.hideLoading();
+      alert(`编辑失败！！！请确认填写数据：${error.error.message}`);
     });
   }
 
+  formatDate(date: any): string {
+    const d = new Date(date);
+    let month = '' + (d.getMonth() + 1);
+    let day = '' + d.getDate();
+    const year = d.getFullYear();
+    if (month.length < 2) {
+        month = '0' + month;
+    }
+    if (day.length < 2) {
+        day = '0' + day;
+    }
+    return [year, month, day].join('-');
+}
+
+  // 点击当前tabel行
   rowSelectFn(event): void {
     this.showUserDetail = event.data;
+    this.daysSelected = event.data.recorderLists;
+    // console.log('daysSelected', this.daysSelected);
+  }
+
+  // 点击按钮
+  clickCalendarBtn(): void {
+    console.log('选择日期');
+    this.calendar.updateTodaysDate(); // 同步日历组件数据
+  }
+
+  isSelected = (event: any) => {
+    return this.daysSelected.find((x: any) => {
+      return this.formatDate(x) === this.formatDate(event);
+    }) ? 'selected' : null;
+  }
+
+  // 日历选择日期
+  select(event: any, calendar: any) {
+    // const date =
+    //   event.getFullYear() +
+    //   '-' +
+    //   ('00' + (event.getMonth() + 1)).slice(-2) +
+    //   '-' +
+    //   ('00' + event.getDate()).slice(-2);
+    console.log('eventevent', event);
+    // tslint:disable-next-line:no-debugger
+    // debugger;
+    const index = this.daysSelected.findIndex(x => this.formatDate(x) === this.formatDate(event));
+    if (index < 0) { this.daysSelected.push(event); }
+    else { this.daysSelected.splice(index, 1); }
+    calendar.updateTodaysDate();
+    console.log('daysSelected', this.daysSelected);
+    // console.log('showUserDetail', this.showUserDetail);
+  }
+
+  // 保存日期
+  saveThisCalendar(): void {
+    this.editeRow({newData: this.showUserDetail});
   }
 }

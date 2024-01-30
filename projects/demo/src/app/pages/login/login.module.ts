@@ -8,6 +8,7 @@ import { routes } from './login.routes';
 
 import { NbLoginComponent } from './login.component';
 import { FormsModule } from '@angular/forms';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';     // add
 
 @NgModule({
   imports: [
@@ -15,6 +16,7 @@ import { FormsModule } from '@angular/forms';
     RouterModule.forChild(routes),
     SharedModule,
     FormsModule,
+    MatProgressSpinnerModule,
   ],
   declarations: [
     NbLoginComponent,
