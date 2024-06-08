@@ -16,6 +16,7 @@ import { Observable } from 'rxjs';
 import {MatCalendar, MatCalendarCellClassFunction} from '@angular/material/datepicker';
 import {MatButtonModule} from '@angular/material/button';
 import { DateListComponent } from './../date-list/date-list.component';
+import {PageEvent} from '@angular/material/paginator';
 
 
 
@@ -49,6 +50,12 @@ export class BasicExampleDataComponent implements OnInit {
   loading$: Observable<string> = this.loadingService.subject.asObservable();
   daysSelected: any[] = [];
   event: any;
+  length = 100;
+  pageSize = 10;
+  page = 1;
+  // MatPaginator Output
+  pageEvent: PageEvent;
+  public searchName = '';
 
   // 签到记录
   settings = {
@@ -111,19 +118,12 @@ export class BasicExampleDataComponent implements OnInit {
         type: 'custom',
         renderComponent: DateListComponent
       },
-      // phone: {
-      //   title: '联系电话',
-      // },
-      // hasTheDate: {
-      //   title: '签到日期',
-      //   // width: '500px',
-      //   type: 'custom',
-      //   class: 'custom',
-      //   renderComponent: CustomRenderComponent
-      //   // hide: true
-      //   // valuePrepareFunction: (cell, row) => row.hasTheDate
-      // }
     },
+    // pager: {
+    //   display: true,
+    //   page: 1,
+    //   perPage: 5,
+    // },
   };
 // 缴费记录
   settingsFree = {
@@ -173,7 +173,7 @@ export class BasicExampleDataComponent implements OnInit {
   };
 
   ngOnInit() {
-    this.getStudentList();
+    this.getStudentList(1, 10);
   }
 
   hideLoading(): void {
@@ -194,21 +194,41 @@ export class BasicExampleDataComponent implements OnInit {
     return(yyyymmdd);
   }
 
+  searchByName(): void {
+    console.log('searchName', this.searchName);
+    this.getStudentList(1, 10, this.searchName);
+  }
+
+  resetName(): void {
+    this.searchName = '';
+    this.getStudentList(1, 10);
+  }
+
+  onPageChange(pageEvent: PageEvent): void {
+    this.page = pageEvent.pageIndex;
+    this.pageSize = pageEvent.pageSize;
+    console.log('pageEvent', pageEvent);
+    this.getStudentList(pageEvent.pageIndex + 1, pageEvent.pageSize);
+  }
+
   // 刷新list列表
   reloadStudentList(): void {
-    this.getStudentList();
+    this.getStudentList(1, 10);
   }
 
   // 获取list列表
-  getStudentList() {
+  getStudentList(page = 1, limit = 10, name = '') {
     this.showLoading('学生列表加载中。。。');
-    const httpOptions = {
+    const httpOptions: any = {
       // headers: new HttpHeaders({ 'Access-Control-Allow-Origin': '*' })
+        // name: 'sasa'
     };
-    this.http.get(`${this.apiUrl}student/list`, httpOptions).subscribe((res: any) => {
+    this.http.get(`${this.apiUrl}student/list?limit=${limit}&page=${page}&name=${name}`, httpOptions)
+    .subscribe((res: any) => {
       // console.log('获取学生列表', res);
       if (res.res) {
         this.data = res.res.data;
+        this.length = res.res.totalPages * this.pageSize;
         this.hideLoading();
       }
     }, (error) => {
@@ -225,7 +245,7 @@ export class BasicExampleDataComponent implements OnInit {
       if (res.res) {
         this.hideLoading();
         alert('添加成功！');
-        this.getStudentList();
+        this.getStudentList(1, 10);
         // event.confirm.resolve(event.newData);
       }
     }, (error) => {
@@ -244,7 +264,7 @@ export class BasicExampleDataComponent implements OnInit {
       this.http.delete(`${this.apiUrl}student/delete/${event.data._id}`).subscribe((res: any) => {
         this.hideLoading();
         alert('删除成功！');
-        this.getStudentList();
+        this.getStudentList(1, 10);
       });
     }
     else {
@@ -261,9 +281,9 @@ export class BasicExampleDataComponent implements OnInit {
     this.http.post(`${this.apiUrl}student/update/${event.newData._id}`, event.newData).subscribe((res: any) => {
       if (res.res) {
         alert('编辑成功！');
-        this.getStudentList();
+        this.getStudentList(1, 10);
       }
-      this.hideLoading();
+      // this.hideLoading();
     }, (error) => {
       this.hideLoading();
       alert(`编辑失败！！！请确认填写数据：${error.error.message}`);
@@ -286,9 +306,18 @@ export class BasicExampleDataComponent implements OnInit {
 
   // 点击当前tabel行
   rowSelectFn(event): void {
+    const recorderListsArr = this.sortDateArr(event.data.recorderLists);
     this.showUserDetail = event.data;
+    this.showUserDetail.recorderLists = recorderListsArr;
     this.daysSelected = event.data.recorderLists;
     // console.log('daysSelected', this.daysSelected);
+  }
+
+  // sort date array
+  sortDateArr(arr): any[] {
+    return arr.sort((a, b) => {
+      return (new Date(a) as any) - (new Date(b) as any);
+    });
   }
 
   // 点击按钮
@@ -319,7 +348,6 @@ export class BasicExampleDataComponent implements OnInit {
     else { this.daysSelected.splice(index, 1); }
     calendar.updateTodaysDate();
     console.log('daysSelected', this.daysSelected);
-    // console.log('showUserDetail', this.showUserDetail);
   }
 
   // 保存日期

@@ -16,6 +16,7 @@ import {MatIconModule} from '@angular/material/icon';
 import {MatButtonModule} from '@angular/material/button';
 import {MatDialogModule} from '@angular/material/dialog';
 import {MatCardModule} from '@angular/material/card';
+import {MatPaginatorModule} from '@angular/material/paginator';
 
 
 import {MatFormFieldModule} from '@angular/material/form-field';
@@ -46,6 +47,7 @@ const SHARED_DIRECTIVES = [
     MatButtonModule,
     MatDialogModule,
     MatCardModule,
+    MatPaginatorModule,
     FormsModule,
     ReactiveFormsModule,
   ],

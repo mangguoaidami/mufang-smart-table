@@ -21,35 +21,33 @@
       <p>使用次数：{{showUserDetail.didNum}}/{{showUserDetail.hasNum}}</p>
       <p>课程可用时段：{{ showUserDetail.validity }}</p>
       <p>加入时间：{{showUserDetail.joiningYear}}</p>
-      <!-- <p>映像：{{showUserDetail.division}}</p> -->
-      <!-- <div class="hasTheDate">
-        <p>签到记录：</p>
-          <p *ngFor="let message of showUserDetail.recorderLists" class="alert-message">{{  message | date:'mediumDate' }}/ </p>
-          <p>daysSelected：{{ daysSelected }}</p>
-      </div> -->
-      <div class="record_card">
+      <div class="record_card" *ngIf="!showUserDetail.recorderLists || showUserDetail.recorderLists.length === 0">
+        <h4>暂无签到记录！</h4>
+      </div>
+      <div class="record_card" *ngIf="showUserDetail.recorderLists && showUserDetail.recorderLists.length > 0">
         <mat-card>
           <mat-card-content>
             <p>签到记录：</p>
-            <p *ngFor="let message of showUserDetail.recorderLists" class="alert-message">{{  message | date:'mediumDate' }}/ </p>
-            <!-- <p>daysSelected字段：</p>
-            <p *ngFor="let message of daysSelected" class="alert-message">{{  message | date:'mediumDate' }}/ </p> -->
+            <p *ngFor="let message of showUserDetail.recorderLists" class="alert-message">{{  message | date:"yyyy.MM.dd" }}/ </p>
           </mat-card-content>
         </mat-card>
       </div>
       
       <div class="datepicker-container">
         <div class="date_btn">
-          <button mat-raised-button>null</button>
+          <!-- <button mat-raised-button>null</button>
           <button mat-raised-button color="primary">null</button>
           <button mat-raised-button color="warn">null</button>
-          <button mat-raised-button disabled>null</button>
+          <button mat-raised-button disabled>null</button> -->
           <button mat-raised-button color="accent" (click)="reloadStudentList()">
             刷新
             <mat-icon>refresh</mat-icon>
           </button>
           <button [matMenuTriggerFor]="appMenu" mat-raised-button color="primary" (click)="clickCalendarBtn()">选择日期</button>
         <button mat-raised-button color="accent" (click)="saveThisCalendar()">保存日期</button>
+        <input matInput maxlength="20" [(ngModel)]="searchName" placeholder="姓名...">
+        <button mat-raised-button color="primary" (click)="searchByName()">搜索</button>
+        <button mat-raised-button color="warn" (click)="resetName()">清空</button>
         </div>
         
         <mat-menu #appMenu="matMenu">
@@ -65,6 +63,11 @@
       </div>
       <ng2-smart-table [settings]="settings" (createConfirm)="addRow($event)" (editConfirm)="editeRow($event)"
         (deleteConfirm)="deleteFn($event)" (rowSelect)="rowSelectFn($event)" [source]="data"></ng2-smart-table>
+        <mat-paginator [length]="length"
+               [pageSize]="pageSize"
+               [hidePageSize]="true"
+               (page)="onPageChange($event)">
+</mat-paginator>
     </div>
   </div>
   <div class="tab-pane fade" id="profile" role="tabpanel" aria-labelledby="profile-tab">

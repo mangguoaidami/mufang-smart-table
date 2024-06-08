@@ -24,7 +24,7 @@ import { routes } from './app.routes';
 import { ScrollPositionDirective } from './theme/directives/scrollPosition.directive';
 import { ExcelService } from './services/sharedServices';
 
-registerLocaleData(zh);
+// registerLocaleData(zh); // <--中文Date字符
 @NgModule({
   declarations: [
     AppComponent,
@@ -46,7 +46,10 @@ registerLocaleData(zh);
     BrowserAnimationsModule,
     MatMenuModule,
   ],
-  providers: [ ExcelService, DatePipe, {provide: LOCALE_ID, useValue: 'zh' } ],
+  providers: [
+    ExcelService, DatePipe,
+    //  {provide: LOCALE_ID, useValue: 'zh' } // <--中文Date字符
+  ],
   bootstrap: [AppComponent],
 })
 export class AppModule { }
