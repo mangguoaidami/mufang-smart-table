@@ -223,8 +223,8 @@ export class BasicExampleDataComponent implements OnInit {
       // headers: new HttpHeaders({ 'Access-Control-Allow-Origin': '*' })
         // name: 'sasa'
     };
-    this.http.get(`${this.apiUrl}student/list?limit=${limit}&page=${page}&name=${name}`, httpOptions)
-    .subscribe((res: any) => {
+    this.http.get(`${this.apiUrl}student/list?limit=${limit}&page=${page}&name=${name}`, httpOptions).subscribe((res: any) => {
+    // this.http.get(`api/student/list?limit=${limit}&page=${page}&name=${name}`, httpOptions).subscribe((res: any) => {
       // console.log('获取学生列表', res);
       if (res.res) {
         this.data = res.res.data;

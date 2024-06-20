@@ -64,8 +64,8 @@
     const httpOptions = {
       // headers: new HttpHeaders({ 'Access-Control-Allow-Origin': '*' })
     };
-    await this.http.post(`${this.apiUrl}auth`, {id, password}, httpOptions).subscribe((res: any) => {
-      // await this.http.post(`api/auth`, {id, password}, httpOptions).subscribe((res: any) => {
+    // await this.http.post(`${this.apiUrl}auth`, {id, password}, httpOptions).subscribe((res: any) => {
+    await this.http.post('/api/auth', {id, password}, httpOptions).subscribe((res: any) => {
       console.log('auth_log', res);
       if (res.res) {
         this.hideLoading();
